@@ -1,0 +1,41 @@
+- name: Create Installation Directory for Java
+  file: path={{ java_base_dir }}
+        state=directory
+
+- name: Download copy of Java from Oracle
+  shell: "wget --no-cookies --no-check-certificate --header 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie' '{{ java_download_url }}' chdir={{ java_base_dir }} creates={{ java_base_dir }}/{{ java_archive_file }}"
+
+- name: Unzip Downloaded Archive
+  unarchive:
+    src: "{{ java_base_dir }}/{{ java_archive_file }}"
+    dest: "{{ java_base_dir }}"
+    copy: no
+    creates: /opt/java/jdk1.8.0_60/README.html
+
+- name: Check symlink for current Java
+  stat: path={{ java_symbolic_link }}
+  register: currentExists
+
+- name: Remove any existing current symlink
+  file: path={{ java_symbolic_link }}
+        state=absent
+  when: currentExists.stat.isdir is defined and currentExists.stat.isdir
+
+- name: Create Symbolic Link for Current Version
+  file: path={{ java_symbolic_link }}
+        src={{ java_base_dir }}/{{ java_archive_inner_dir }}
+        state=link
+        force=yes
+
+- name: Add JAVA_HOME to /etc/environment
+  lineinfile: dest=/etc/environment
+        state=present
+        line=JAVA_HOME={{ java_symbolic_link }}
+
+- name: Install alternatives entries for Java
+  command: alternatives --install /usr/bin/java java {{ java_symbolic_link }}/bin/java 2
+
+- name: Set Java alternatives selection to current Version
+  command: alternatives --set java {{ java_symbolic_link }}/bin/java
+
+...

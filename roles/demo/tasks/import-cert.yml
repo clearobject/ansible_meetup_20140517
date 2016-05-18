@@ -1,0 +1,10 @@
+# - name: add cert to java keystore
+#   shell: ./keytool -import -noprompt -alias {{ inventory_hostname }} -keystore ../jre/lib/security/cacerts -storepass changeit -file {{ cert_location }}
+#   args:
+#     chdir: "/opt/java/current/bin"
+#   when: inventory_hostname not in cert.stdout
+
+- name: add cert to java keystore using module
+  keytool:
+      alias: "{{ inventory_hostname }}"
+      cert_location: "{{ cert_location }}"

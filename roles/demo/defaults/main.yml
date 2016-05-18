@@ -1,0 +1,11 @@
+tls_root: "/etc/pki/tls"
+cert_location: "{{ tls_root }}/certs/ansible_generated.crt"
+key_location: "{{ tls_root }}/private/ansible_generated.key"
+csr_location: "{{ tls_root }}/private/ansible_generated.csr"
+cert_fields: "/C=US/ST=Indiana/L=Fishers/O=CloudOne/CN={{ inventory_hostname }}"
+java_archive_file: jdk-8u60-linux-x64.tar.gz
+java_archive_inner_dir: jdk1.8.0_60
+java_download_build_vdir: 8u60-b27
+java_download_url: "http://download.oracle.com/otn-pub/java/jdk/{{ java_download_build_vdir }}/{{ java_archive_file }}"
+java_base_dir: /opt/java
+java_symbolic_link: "{{ java_base_dir }}/current"

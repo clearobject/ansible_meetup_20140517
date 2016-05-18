@@ -1,0 +1,8 @@
+---
+- name: Demo for Ansible Indianapolis Meetup 2016-05-17
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  hosts: all
+  roles:
+    - demo
